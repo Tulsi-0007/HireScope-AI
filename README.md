@@ -88,25 +88,25 @@ Semantic similarity is generated using the `all-MiniLM-L6-v2` Sentence Transform
 
 
 
-\- MySQL database integration
+- MySQL database integration
 
-\- Advanced skill extraction
+- Advanced skill extraction
 
-\- More job roles and datasets
+- More job roles and datasets
 
-\- Personalized career roadmap generation
+- Personalized career roadmap generation
 
-\- Improved recruiter analytics
+- Improved recruiter analytics
 
-\- Deployment on a cloud platform
-
-
-
-\## 👩‍💻 Author
+- Deployment on a cloud platform
 
 
 
-\*\*Tulsi Kumari\*\*
+##  Author
+
+
+
+**Tulsi Kumari**
 
 
 
