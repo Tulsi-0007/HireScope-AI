@@ -1,4 +1,4 @@
-\# HireScope AI
+# HireScope AI
 
 
 
@@ -6,7 +6,7 @@ An intelligent semantic resume analysis and career recommendation system using N
 
 
 
-\## 📌 Overview
+##  Overview
 
 
 
@@ -18,57 +18,57 @@ It helps candidates understand how well their resume matches a role and identifi
 
 
 
-\## ✨ Features
+##  Features
 
 
 
-\- 🔐 Candidate and Recruiter authentication
+-  Candidate and Recruiter authentication
 
-\- 📄 Resume upload and analysis
+-  Resume upload and analysis
 
-\- 🧠 Semantic similarity using Sentence Transformers
+-  Semantic similarity using Sentence Transformers
 
-\- 🎯 Job-role recommendation
+-  Job-role recommendation
 
-\- 📊 Resume-job matching score
+-  Resume-job matching score
 
-\- ✅ Matched skills identification
+-  Matched skills identification
 
-\- ❌ Missing skills identification
+-  Missing skills identification
 
-\- 📚 Resume analysis history
+-  Resume analysis history
 
-\- 👥 Recruiter-side multi-resume ranking
+-  Recruiter-side multi-resume ranking
 
-\- 📝 Custom Job Description analysis
+-  Custom Job Description analysis
 
-\- 📑 Printable analysis report
-
-
-
-\## 🛠️ Tech Stack
+-  Printable analysis report
 
 
 
-\- \*\*Backend:\*\* Python, Flask
-
-\- \*\*Frontend:\*\* HTML, CSS, Bootstrap 5
-
-\- \*\*Database:\*\* SQLite, Flask-SQLAlchemy
-
-\- \*\*NLP:\*\* Sentence Transformers
-
-\- \*\*Machine Learning:\*\* Semantic Similarity
-
-\- \*\*Data Processing:\*\* Pandas
-
-\- \*\*PDF Processing:\*\* PyPDF2
-
-\- \*\*Visualization:\*\* Chart.js
+##  Tech Stack
 
 
 
-\## 🧮 Matching Approach
+- **Backend:** Python, Flask
+
+- **Frontend:** HTML, CSS, Bootstrap 5
+
+- **Database:** SQLite, Flask-SQLAlchemy
+
+- **NLP:** Sentence Transformers
+
+- **Machine Learning:** Semantic Similarity
+
+- **Data Processing:** Pandas
+
+- **PDF Processing:** PyPDF2
+
+- **Visualization:** Chart.js
+
+
+
+##  Matching Approach
 
 
 
@@ -76,7 +76,7 @@ HireScope AI calculates the overall matching score using:
 
 
 
-\*\*Overall Score = 60% Semantic Similarity + 40% Skill Match\*\*
+**Overall Score = 60% Semantic Similarity + 40% Skill Match**
 
 
 
@@ -84,7 +84,7 @@ Semantic similarity is generated using the `all-MiniLM-L6-v2` Sentence Transform
 
 
 
-\## 🚀 Future Improvements
+##  Future Improvements
 
 
 
