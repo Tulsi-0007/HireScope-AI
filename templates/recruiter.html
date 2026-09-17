@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HireScope AI | Recruiter</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --bg-deep: #0a0a0c;
+            --card-bg: #16161a;
+            --primary-neon: #818cf8;
+            --success-neon: #4ade80;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* BACKGROUND BLOBS */
+        .bg-animations {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            filter: blur(100px);
+            opacity: 0.3;
+        }
+
+        .blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            animation: move 30s infinite alternate;
+        }
+
+        .blob-1 { background: #312e81; top: -10%; left: -5%; }
+        .blob-2 { background: #4c1d95; bottom: -10%; right: -5%; }
+
+        @keyframes move {
+            from { transform: translate(0,0); }
+            to { transform: translate(100px, 100px); }
+        }
+
+        /* NAVBAR FIX */
+        .navbar-custom {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* GLASS UI */
+        .glass {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* INPUTS */
+        textarea, input {
+            background: #1f1f23 !important;
+            color: white !important;
+            border: 1px solid #333 !important;
+        }
+.form-control::placeholder,
+textarea::placeholder {
+    color: #e2e8f0 !important;
+    opacity: 1 !important;
+}
+        /* BUTTON */
+        .btn-primary {
+            background-color: var(--primary-neon);
+            border: none;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background-color: #6366f1;
+        }
+
+        /* TABLE */
+        .table {
+            color: white;
+            border-color: rgba(255,255,255,0.05);
+        }
+
+        /* Role section in table */
+        .role-text {
+        color: #cbd5f5;
+        font-weight: 500;
+        }
+
+        .table thead {
+            background: #1f1f23;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(255,255,255,0.03);
+        }
+
+        /* TOP CANDIDATE HIGHLIGHT */
+        .table-active {
+            background: rgba(74, 222, 128, 0.08) !important;
+            border-left: 3px solid var(--success-neon);
+        }
+
+        /* SCORE BADGE */
+        .badge-score {
+            background: rgba(129, 140, 248, 0.15);
+            color: var(--primary-neon);
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-weight: 600;
+            box-shadow: 0 0 10px rgba(129,140,248,0.3);
+        }
+
+        /* HEADER */
+        .header-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+        }
+
+        .text-primary {
+            color: var(--primary-neon) !important;
+        }
+
+    </style>
+</head>
+
+<body class="container py-5">
+
+<!-- NAVBAR -->
+<div class="glass d-flex justify-content-between align-items-center mb-4 py-3 px-4 navbar-custom">
+    <h5 class="text-white fw-bold mb-0">HireScope Recruiter</h5>
+    <div>
+        <a href="/history" class="btn btn-outline-light btn-sm me-2">History</a>
+        <a href="/logout" class="btn btn-outline-danger btn-sm">Logout</a>
+    </div>
+</div>
+
+<!-- BACKGROUND -->
+<div class="bg-animations">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+</div>
+
+<!-- HEADER -->
+<div class="text-center mb-5">
+    <h1 class="header-title">
+        HireScope <span class="text-primary">AI</span>
+    </h1>
+    <p class="text-white-50">Recruiter Intelligence Dashboard</p>
+</div>
+
+<!-- FORM -->
+<div class="glass col-md-7 mx-auto shadow-lg">
+    <form method="post" enctype="multipart/form-data">
+
+        <label class="form-label text-white-50 small fw-bold">
+            JOB DESCRIPTION
+        </label>
+
+        <textarea name="job_desc" class="form-control mb-3" rows="4"
+        placeholder="e.g. Python, ML, SQL, NLP"></textarea>
+
+        <label class="form-label text-white-50 small fw-bold">
+            UPLOAD MULTIPLE RESUMES
+        </label>
+
+        <input type="file" name="resumes" multiple class="form-control mb-3" required>
+
+        <button class="btn btn-primary w-100 btn-lg">
+            Analyze Candidates
+        </button>
+    </form>
+</div>
+
+<!-- EMPTY STATE -->
+{% if not results %}
+<div class="glass text-center py-5">
+    <h5 class="text-white-50">No candidates analyzed yet</h5>
+    <p class="text-muted">Upload resumes and see AI-powered ranking here</p>
+</div>
+{% endif %}
+
+<!-- RESULTS -->
+{% if results %}
+<div class="glass">
+    <h5 class="mb-3 text-white">Candidate Rankings</h5>
+
+    <p class="text-success small fw-bold">
+        Top Candidate: {{ results[0].name }} is best suited for {{ results[0].role }}
+    </p>
+
+    <table class="table table-bordered align-middle">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in results %}
+            <tr class="{% if loop.index == 1 %}table-active{% endif %}">
+                <td>#{{ loop.index }}</td>
+                <td>{{ r.name }}</td>
+                <td class="role-text">{{ r.role }}</td>
+                <td>
+                    <span class="badge-score">{{ r.score }}%</span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<!-- ANALYTICS -->
+{% if results %}
+<div class="glass">
+    <h5 class="mb-4">Candidate Analytics</h5>
+
+    <p class="text-white-50 small">
+        Total Candidates: <b>{{ results|length }}</b> |
+        Top Score: <b>{{ results[0].score }}%</b>
+    </p>
+
+    <script id="chart-data" type="application/json">
+    {
+        "names": {{ results | map(attribute='name') | list | tojson }},
+        "scores": {{ results | map(attribute='score') | list | tojson }}
+    }
+    </script>
+
+    <canvas id="scoreChart"></canvas>
+</div>
+{% endif %}
+
+<!-- CHART -->
+{% if results %}
+<script>
+    const chartData = JSON.parse(document.getElementById("chart-data").textContent);
+
+    new Chart(document.getElementById('scoreChart'), {
+        type: 'bar',
+        data: {
+            labels: chartData.names,
+            datasets: [{
+                data: chartData.scores,
+                backgroundColor: '#818cf8',
+                borderRadius: 8
+            }]
+        },
+        options: {
+            animation: {
+                duration: 1200,
+                easing: 'easeOutQuart'
+            },
+            plugins: { legend: { display: false } },
+            scales: {
+                x: {
+                    ticks: { color: '#94a3b8' }
+                },
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: { color: '#94a3b8' }
+                }
+            }
+        }
+    });
+</script>
+{% endif %}
+
+</body>
+</html>

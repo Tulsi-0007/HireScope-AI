@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HireScope AI | Analysis</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-deep: #0a0a0c;
+            --card-bg: #16161a;
+            --primary-neon: #818cf8;
+            --success-neon: #4ade80;
+            --danger-neon: #f87171;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
+        body { 
+            background-color: var(--bg-deep); 
+            color: var(--text-main); 
+            font-family: 'Inter', sans-serif; 
+            min-height: 100vh; 
+            overflow-x: hidden; 
+        }
+
+        /* Particles & Blobs */
+        #particle-canvas { position: fixed; top: 0; left: 0; z-index: 0; pointer-events: none; }
+        .bg-animations { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; filter: blur(100px); opacity: 0.3; }
+        .blob { position: absolute; width: 500px; height: 500px; border-radius: 50%; animation: move 30s infinite alternate; }
+        .blob-1 { background: #312e81; top: -10%; left: -5%; }
+        .blob-2 { background: #4c1d95; bottom: -10%; right: -5%; }
+        @keyframes move { from { transform: translate(0,0); } to { transform: translate(100px, 100px); } }
+
+        /* UI Components */
+        .glass { 
+            background: var(--card-bg); 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+            border-radius: 20px; 
+            padding: 30px; 
+            margin-bottom: 24px; 
+            position: relative;
+            z-index: 1;
+        }
+
+        .tag { 
+            padding: 6px 14px; border-radius: 8px; font-size: 12px; margin: 4px; display: inline-block;
+            background: rgba(255,255,255,0.03); font-weight: 500;
+        }
+        .tag-match { border: 1px solid var(--success-neon); color: var(--success-neon); }
+        .tag-missing { border: 1px solid var(--danger-neon); color: var(--danger-neon); }
+
+        .progress { height: 8px; background-color: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; }
+        .progress-bar { background-color: var(--primary-neon); transition: width 1.5s ease-in-out; }
+        
+        .text-primary { color: var(--primary-neon) !important; }
+        input[type="file"] { background: #1f1f23; border: 1px solid #333; color: white; }
+
+
+        @media print {
+    .btn, #particle-canvas, .bg-animations { display: none !important; }
+    body { background: white !important; color: black !important; }
+    .glass { 
+        background: white !important; 
+        color: black !important; 
+        border: 1px solid #ddd !important;
+        box-shadow: none !important;
+    }
+    .text-primary, .text-white, .text-white-50 { color: black !important; }
+}
+    </style>
+</head>
+<body class="container py-5">
+
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+    <h5 class="text-white fw-bold">HireScope Dashboard</h5>
+
+    <div>
+        <a href="/history" class="btn btn-outline-light btn-sm me-2">History</a>
+        <a href="/logout" class="btn btn-outline-danger btn-sm">Logout</a>
+        <a href="/login" class="btn btn-outline-warning btn-sm me-2">Recruiter</a>
+    </div>
+</div>
+
+
+    <div class="bg-animations">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+    <canvas id="particle-canvas"></canvas>
+
+    {% if not analysis %}
+    <div class="text-center py-5">
+        <h1 class="display-3 fw-bold mt-5 mb-3">HireScope <span class="text-primary">AI</span></h1>
+        <p class="text-white-50 mb-5 fs-5">Next-Gen Resume Semantic Intelligence</p>
+        <div class="glass col-md-5 mx-auto shadow-lg">
+            <form method="post" enctype="multipart/form-data">
+                <div class="mb-4 text-start">
+                    <label class="form-label text-white-50 small fw-bold">UPLOAD PDF RESUME</label>
+                    <input type="file" name="resume" class="form-control form-control-lg" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold">ANALYZE NOW</button>
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <div class="glass border-start border-primary border-4">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h6 class="text-primary fw-bold small">CANDIDATE PROFILE</h6>
+                <h1 class="fw-bold text-white">{{ analysis.candidate_name }}</h1>
+
+
+                <button onclick="window.print()" class="btn btn-outline-primary btn-sm mt-2">
+                    Download Analysis Report
+                </button>
+
+
+                <div class="d-flex gap-4 mt-3">
+                    <span class="text-white-50 small">📞 {{ analysis.phone }}</span>
+                    <a href="https://{{ analysis.linkedin }}" target="_blank" class="text-primary text-decoration-none small">🔗 LinkedIn</a>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <div class="d-inline-block text-center p-3 rounded-4" style="background: rgba(129, 140, 248, 0.1);">
+                    <div class="text-primary h1 fw-bold mb-0">{{ analysis.top_match.score }}%</div>
+                    <div class="text-white-50 small fw-bold">MATCH SCORE</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-5">
+            <div class="glass text-center h-100">
+                <h6 class="text-white-50 small">TARGET ROLE</h6>
+                <h4 class="text-primary mb-4">{{ analysis.top_match.title }}</h4>
+                <div style="width: 200px; margin: auto;"><canvas id="gauge"></canvas></div>
+                <h2 class="fw-bold mt-3 text-white">{{ analysis.top_match.score }}%</h2>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="glass h-100">
+                <h5 class="mb-4">Competency Analysis</h5>
+                <p class="text-success small fw-bold mb-2">IDENTIFIED SKILLS</p>
+                {% for s in analysis.matched_skills %}<span class="tag tag-match">{{ s }}</span>{% endfor %}
+                <p class="text-danger small fw-bold mt-4 mb-2">MISSING COMPETENCIES</p>
+                {% for s in analysis.missing_skills %}<span class="tag tag-missing">{{ s }}</span>{% endfor %}
+
+                <p class="text-danger small fw-bold mt-4 mb-2">MISSING COMPETENCIES</p>
+{% for s in analysis.missing_skills %}
+<span class="tag tag-missing">{{ s }}</span>
+{% endfor %}
+
+
+<p class="text-info small fw-bold mt-4 mb-2">SKILL IMPROVEMENT SUGGESTIONS</p>
+
+{% for r in analysis.recommendations %}
+<div class="mb-2">
+    <span class="tag tag-missing">{{ r.skill }}</span>
+    <span class="text-white-50 small"> → {{ r.resource }}</span>
+</div>
+{% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="glass">
+                <h5 class="mb-4 text-white">Career Path Recommendations</h5>
+                {% for job in analysis.others %}
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="fw-bold text-white-50">{{ job.title }}</span>
+                        <span class="text-primary small fw-bold">{{ job.score }}% Match</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar recommendation-bar" 
+                             data-score="{{ job.score }}" 
+                             style="width: 0%;"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="js_score" value="{{ analysis.top_match.score }}">
+    {% endif %}
+
+    <script>
+        window.onload = function() {
+            // 1. Gauge Chart
+            const scoreEl = document.getElementById('js_score');
+            if(scoreEl) {
+                new Chart(document.getElementById('gauge'), {
+                    type: 'doughnut',
+                    data: { datasets: [{ data: [scoreEl.value, 100-scoreEl.value], backgroundColor: ['#818cf8', '#1f1f23'], borderWidth: 0, circumference: 180, rotation: 270 }] },
+                    options: { cutout: '85%', plugins: { tooltip: {enabled: false} } }
+                });
+            }
+
+            // 2. Animate Bars
+            setTimeout(() => {
+                document.querySelectorAll('.recommendation-bar').forEach(bar => {
+                    bar.style.width = bar.getAttribute('data-score') + '%';
+                });
+            }, 400);
+
+            // 3. Colorful Glowing Particles
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            const colors = ['#818cf8', '#a855f7', '#0ea5e9', '#4ade80', '#ffffff'];
+
+            function init() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                particles = [];
+                for(let i=0; i<120; i++) {
+                    particles.push({
+                        x: Math.random()*canvas.width, y: Math.random()*canvas.height,
+                        speedX: (Math.random()-0.5)*2.5, speedY: (Math.random()-0.5)*2.5,
+                        size: Math.random()*2+1, color: colors[Math.floor(Math.random()*colors.length)]
+                    });
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0,0,canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.x += p.speedX; p.y += p.speedY;
+                    if(p.x > canvas.width) p.x=0; if(p.x < 0) p.x=canvas.width;
+                    if(p.y > canvas.height) p.y=0; if(p.y < 0) p.y=canvas.height;
+                    
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+                    ctx.shadowBlur = 10; ctx.shadowColor = p.color;
+                    ctx.fillStyle = p.color; ctx.fill();
+                    ctx.shadowBlur = 0;
+                });
+                requestAnimationFrame(animate);
+            }
+            init(); animate();
+            window.addEventListener('resize', init);
+        };
+    </script>
+</body>
+</html>

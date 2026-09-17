@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HireScope AI | History</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-deep: #0a0a0c;
+            --card-bg: #16161a;
+            --primary-neon: #818cf8;
+            --danger-neon: #f87171;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* BACKGROUND BLOBS */
+        .bg-animations {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            filter: blur(100px);
+            opacity: 0.3;
+        }
+
+        .blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            animation: move 30s infinite alternate;
+        }
+
+        .blob-1 { background: #312e81; top: -10%; left: -5%; }
+        .blob-2 { background: #4c1d95; bottom: -10%; right: -5%; }
+
+        @keyframes move {
+            from { transform: translate(0,0); }
+            to { transform: translate(100px, 100px); }
+        }
+
+        /* GLASS CARD */
+        .glass {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* TABLE */
+        .table {
+        background-color: var(--card-bg) !important;
+        color: var(--text-main) !important;
+        }
+
+        .table td, .table th {
+        background-color: var(--card-bg) !important;
+        color: var(--text-main) !important;
+        }
+
+        .table thead th {
+        background-color: #1f1f23 !important;
+        color: #ffffff !important;
+        }
+
+        .table-bordered {
+        border-color: rgba(255,255,255,0.08) !important;
+        }
+
+        .table tbody tr:nth-child(even) {
+    background-color: rgba(255,255,255,0.02);
+}
+
+        .table tbody tr:hover {
+            background: rgba(129, 140, 248, 0.08);
+            transition: 0.3s;
+        }
+
+        /* BUTTON */
+        .btn-primary {
+            background-color: var(--primary-neon);
+            border: none;
+            font-weight: 500;
+        }
+
+        .btn-primary:hover {
+            background-color: #6366f1;
+        }
+
+        /* HEADER */
+        .header-title {
+            font-size: 2.3rem;
+            font-weight: 800;
+        }
+
+        .text-primary {
+            color: var(--primary-neon) !important;
+        }
+
+        .file-name {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .date-badge {
+            background: rgba(129, 140, 248, 0.1);
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+    </style>
+</head>
+
+<body class="container py-5">
+
+<!-- BACKGROUND -->
+<div class="bg-animations">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+</div>
+
+<!-- HEADER -->
+<div class="text-center mb-5">
+    <h1 class="header-title">
+        Resume <span class="text-primary">History</span>
+    </h1>
+    <p class="text-white-50">Your past analyses, neatly stored</p>
+</div>
+
+<div class="glass">
+
+    {% if resumes %}
+        <table class="table table-bordered align-middle">
+            <thead>
+                <tr>
+                    <th>S. No.</th>
+                    <th>File</th>
+                    <th>Uploaded On</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for resume in resumes %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+
+                    <!-- Clean file name -->
+                    <td class="file-name">
+                        {{ resume.file_path.split('/')[-1] }}
+                    </td>
+
+                    <!-- FIXED DATE VISIBILITY -->
+                    <td style="color: #ffffff !important; font-weight: 600;">
+                        {% if resume.created_at %}
+                            <span class="date-badge">
+                                {{ (resume.created_at + timedelta(hours=5, minutes=30)).strftime('%d %b %Y, %I:%M %p') }}
+                            </span>
+                        {% else %}
+                            <span class="text-danger">Not Available</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <a href="{{ url_for('view_resume', resume_id=resume.id) }}" 
+                           class="btn btn-sm btn-primary">
+                           View Analysis
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    {% else %}
+        <div class="text-center py-5">
+            <h5 class="text-white-50">No resumes uploaded yet</h5>
+            <p class="text-muted">Your history will appear here once you start analyzing</p>
+        </div>
+    {% endif %}
+
+</div>
+
+</body>
+</html>
